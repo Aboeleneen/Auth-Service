@@ -93,6 +93,10 @@ export class AuthService {
     };
   }
 
+  async logout(userId: string) {
+    await this.usersService.updateRefreshToken(userId, null);
+  }
+
   private async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.usersService.updateRefreshToken(userId, hashedRefreshToken);
