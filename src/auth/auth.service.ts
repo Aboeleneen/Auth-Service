@@ -5,6 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/users/schemas/user.schema';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +51,16 @@ export class AuthService {
       });
 
       const user = await this.usersService.findById(userId);
-      if (!user || user.refreshToken !== refreshTokenDto.refreshToken) {
+      if (!user || !user.refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const isRefreshTokenValid = await bcrypt.compare(
+        refreshTokenDto.refreshToken,
+        user.refreshToken
+      );
+
+      if (!isRefreshTokenValid) {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
@@ -84,6 +94,7 @@ export class AuthService {
   }
 
   private async updateRefreshToken(userId: string, refreshToken: string) {
-    await this.usersService.updateRefreshToken(userId, refreshToken);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.usersService.updateRefreshToken(userId, hashedRefreshToken);
   }
 } 
