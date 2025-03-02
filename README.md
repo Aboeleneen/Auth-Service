@@ -6,51 +6,48 @@ A secure authentication system built with NestJS, MongoDB, and JWT.
 
 - User registration and login
 - JWT-based authentication
-- Password hashing with bcrypt
+- Password and refresh token hashing with bcrypt
 - MongoDB integration
 - Swagger API documentation
 - Input validation
 - Protected routes
 - CORS enabled
+- Docker Compose
+- validation of environment variables with Joi
 
 ## Prerequisites
 
-- Node.js (>= 18.16.0)
-- MongoDB
-- npm or yarn
+- Docker and Docker Compose
 
-## Installation
+## Installation & Running the Application
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd <repository-name>
+git clone https://github.com/Aboeleneen/Auth-Service.git
+cd Auth-Service
 ```
 
-2. Install dependencies:
+2. Create a `.env` file based on the `.env.example` file:
 ```bash
-npm install
+cp .env.example .env
 ```
 
-3. Create a `.env` file in the root directory with the following variables:
-```env
-MONGODB_URI=mongodb://localhost/auth-demo
-JWT_SECRET=your-secret-key
-PORT=3000
+3. The default values in `.env.example` are configured to work with Docker Compose. Make sure to use the MongoDB URI with the Docker service name:
+```
+MONGODB_URI=mongodb://mongodb:27017/nestjs-db
 ```
 
-## Running the Application
-
-### Development
+4. Build and start the containers:
 ```bash
-npm run start:dev
+docker-compose up -d
 ```
 
-### Production
-```bash
-npm run build
-npm run start:prod
-```
+This will start:
+- The NestJS application on the port specified in your .env file (default: 3000)
+- MongoDB database service on port 27017
+- Both services will be connected via a Docker network
+
+5. Access the application at `http://localhost:3000` and the Swagger API documentation at `http://localhost:3000/api`.
 
 ## API Documentation
 
@@ -75,68 +72,7 @@ http://localhost:3000/api
 - Must contain at least one number
 - Must contain at least one special character
 
-## Security Features
-- Password hashing using bcrypt
-- JWT-based authentication
-- Input validation using class-validator
-- Protected routes using Guards
-- CORS enabled
-
-## Testing
-
-```bash
-# unit tests
-npm run test
-
-# e2e tests
-npm run test:e2e
-
-# test coverage
-npm run test:cov
-```
-
-## Docker
-
-This application can be run using Docker and Docker Compose.
-
-### Prerequisites
-
-- Docker
-- Docker Compose
-
-### Running with Docker Compose
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd <repository-name>
-```
-
-2. Create a `.env` file based on the `.env.example` file:
-```bash
-cp .env.example .env
-```
-
-3. Update the environment variables in the `.env` file as needed. The default values in `.env.example` are configured to work with Docker Compose.
-
-4. Build and start the containers:
-```bash
-docker-compose up -d
-```
-
-5. Access the application at `http://localhost:3000` and the Swagger API documentation at `http://localhost:3000/api`.
-
-### Building and Running the Docker Image Manually
-
-1. Build the Docker image:
-```bash
-docker build -t nestjs-app .
-```
-
-2. Run the container:
-```bash
-docker run -p 3000:3000 --env-file .env nestjs-app
-```
+## Docker Commands
 
 ### Stopping the Containers
 
@@ -146,46 +82,19 @@ docker-compose down
 
 ### Removing Volumes
 
+To stop the containers and remove the MongoDB data volume:
 ```bash
 docker-compose down -v
 ```
 
-## Deployment
+### Viewing Logs
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+To view the logs of the running containers:
 ```bash
-$ pnpm install -g mau
-$ mau deploy
+docker-compose logs
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+To follow the logs in real-time:
+```bash
+docker-compose logs -f
+```
