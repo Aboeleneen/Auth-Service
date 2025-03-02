@@ -95,6 +95,61 @@ npm run test:e2e
 npm run test:cov
 ```
 
+## Docker
+
+This application can be run using Docker and Docker Compose.
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Running with Docker Compose
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd <repository-name>
+```
+
+2. Create a `.env` file based on the `.env.example` file:
+```bash
+cp .env.example .env
+```
+
+3. Update the environment variables in the `.env` file as needed. The default values in `.env.example` are configured to work with Docker Compose.
+
+4. Build and start the containers:
+```bash
+docker-compose up -d
+```
+
+5. Access the application at `http://localhost:3000` and the Swagger API documentation at `http://localhost:3000/api`.
+
+### Building and Running the Docker Image Manually
+
+1. Build the Docker image:
+```bash
+docker build -t nestjs-app .
+```
+
+2. Run the container:
+```bash
+docker run -p 3000:3000 --env-file .env nestjs-app
+```
+
+### Stopping the Containers
+
+```bash
+docker-compose down
+```
+
+### Removing Volumes
+
+```bash
+docker-compose down -v
+```
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
