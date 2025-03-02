@@ -24,8 +24,7 @@ export class AuthController {
   ) {
     const result = await this.authService.register(registerDto);
     
-    response.cookie('access_token', result.tokens.access_token, accessTokenCookieOptions as CookieOptions);
-    response.cookie('refresh_token', result.tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
+    this.setTokens(response, result.tokens);
     return result;
   }
 
@@ -41,8 +40,7 @@ export class AuthController {
   ) {
     const result = await this.authService.login(loginDto);
     
-    response.cookie('access_token', result.tokens.access_token, accessTokenCookieOptions as CookieOptions);
-    response.cookie('refresh_token', result.tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
+    this.setTokens(response, result.tokens);
     
     return result;
   }
@@ -64,8 +62,7 @@ export class AuthController {
     }
     const result = await this.authService.refreshToken({refreshToken});
     
-    response.cookie('access_token', result.tokens.access_token, accessTokenCookieOptions as CookieOptions);
-    response.cookie('refresh_token', result.tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
+    this.setTokens(response, result.tokens);
     
     return result;
   }
@@ -91,9 +88,13 @@ export class AuthController {
   ) {
     await this.authService.logout(req.user.id);
     
-    response.cookie('access_token', '', { maxAge: 0 });
-    response.cookie('refresh_token', '', { maxAge: 0 });
+    this.setTokens(response, { access_token: '', refresh_token: '' });
     
     return { message: 'Logged out successfully' };
+  }
+
+  private async setTokens(response: Response, tokens: { access_token: string; refresh_token: string }) {
+    response.cookie('access_token', tokens.access_token, accessTokenCookieOptions as CookieOptions);
+    response.cookie('refresh_token', tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
   }
 } 
