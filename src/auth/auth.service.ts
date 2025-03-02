@@ -6,6 +6,18 @@ import { LoginDto } from './dto/login.dto';
 import { User } from 'src/users/schemas/user.schema';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import * as bcrypt from 'bcrypt';
+import { CookieOptions } from 'express-serve-static-core';
+export const accessTokenCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  maxAge: 15 * 60 * 1000, // 15 minutes
+};
+
+export const refreshTokenCookieOptions: CookieOptions = {
+  ...accessTokenCookieOptions,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+};
 
 @Injectable()
 export class AuthService {
@@ -44,7 +56,7 @@ export class AuthService {
     return tokens;
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{ access_token: string; refresh_token: string }> {
     try {
       const { sub: userId } = this.jwtService.verify(refreshTokenDto.refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key',
