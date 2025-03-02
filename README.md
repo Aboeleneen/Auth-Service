@@ -6,6 +6,7 @@ A secure authentication system built with NestJS, MongoDB, and JWT.
 
 - User registration and login
 - JWT-based authentication
+- HTTPOnly cookies for enhanced security
 - Password and refresh token hashing with bcrypt
 - MongoDB integration
 - Swagger API documentation
