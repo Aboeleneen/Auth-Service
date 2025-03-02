@@ -24,8 +24,8 @@ export class AuthController {
   ) {
     const result = await this.authService.register(registerDto);
     
-    response.cookie('access_token', result.access_token, accessTokenCookieOptions as CookieOptions);
-    response.cookie('refresh_token', result.refresh_token, refreshTokenCookieOptions as CookieOptions);
+    response.cookie('access_token', result.tokens.access_token, accessTokenCookieOptions as CookieOptions);
+    response.cookie('refresh_token', result.tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
     return result;
   }
 
@@ -41,8 +41,8 @@ export class AuthController {
   ) {
     const result = await this.authService.login(loginDto);
     
-    response.cookie('access_token', result.access_token, accessTokenCookieOptions as CookieOptions);
-    response.cookie('refresh_token', result.refresh_token, refreshTokenCookieOptions as CookieOptions);
+    response.cookie('access_token', result.tokens.access_token, accessTokenCookieOptions as CookieOptions);
+    response.cookie('refresh_token', result.tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
     
     return result;
   }
@@ -64,8 +64,8 @@ export class AuthController {
     }
     const result = await this.authService.refreshToken({refreshToken});
     
-    response.cookie('access_token', result.access_token, accessTokenCookieOptions as CookieOptions);
-    response.cookie('refresh_token', result.refresh_token, refreshTokenCookieOptions as CookieOptions);
+    response.cookie('access_token', result.tokens.access_token, accessTokenCookieOptions as CookieOptions);
+    response.cookie('refresh_token', result.tokens.refresh_token, refreshTokenCookieOptions as CookieOptions);
     
     return result;
   }

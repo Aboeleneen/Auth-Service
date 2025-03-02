@@ -26,7 +26,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<{ access_token: string; refresh_token: string }> {
+  async register(registerDto: RegisterDto): Promise<{ user: User; tokens: { access_token: string; refresh_token: string } }> {
     const existingUser = await this.usersService.findByEmail(registerDto.email);
     if (existingUser) {
       throw new BadRequestException('User already exists');
@@ -36,10 +36,10 @@ export class AuthService {
     const tokens = await this.generateTokens(user);
     await this.updateRefreshToken(user.id, tokens.refresh_token);
     
-    return tokens;
+    return {user, tokens};
   }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string; refresh_token: string }> {
+  async login(loginDto: LoginDto): Promise<{ user: User; tokens: { access_token: string; refresh_token: string } }> {
     const user = await this.usersService.findByEmail(loginDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -53,10 +53,10 @@ export class AuthService {
     const tokens = await this.generateTokens(user);
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
-    return tokens;
+    return {user, tokens};
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{ access_token: string; refresh_token: string }> {
+  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{ user: User; tokens: { access_token: string; refresh_token: string } }> {
     try {
       const { sub: userId } = this.jwtService.verify(refreshTokenDto.refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key',
@@ -79,7 +79,7 @@ export class AuthService {
       const tokens = await this.generateTokens(user);
       await this.updateRefreshToken(user.id, tokens.refresh_token);
 
-      return tokens;
+      return {user, tokens} ;
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
