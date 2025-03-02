@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
@@ -10,8 +11,10 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
+  const configService = app.get(ConfigService);
+
   // Enable CORS with credentials
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const frontendUrl = configService.get('FRONTEND_URL');
   app.enableCors({
     origin: frontendUrl,
     credentials: true,
@@ -39,7 +42,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env.PORT ?? 3000;
+  const port = configService.get('PORT');
   await app.listen(port);
   logger.log(`Application is running on: http://localhost:${port}`);
   logger.log(`Swagger documentation available at: http://localhost:${port}/api`);
