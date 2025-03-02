@@ -62,8 +62,7 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found');
     }
-    
-    const result = await this.authService.refreshToken(refreshToken);
+    const result = await this.authService.refreshToken({refreshToken});
     
     response.cookie('access_token', result.access_token, accessTokenCookieOptions as CookieOptions);
     response.cookie('refresh_token', result.refresh_token, refreshTokenCookieOptions as CookieOptions);
